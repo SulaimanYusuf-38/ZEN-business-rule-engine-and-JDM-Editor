@@ -1,0 +1,388 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": "{\r\n  \"studentID\": \"S001\",\r\n  \"fullName\": \"Aulia Ramadhan\",\r\n  \"GPA\": 4.0, \r\n  \"AnnualIncome\": 20000,\r\n  \"SocioStatus\": \"Tier 3\",\r\n  \"ExtracurricularScore\": 9.5\r\n}"
+      },
+      "id": "1091d487-eaf7-4bb6-adc5-834a16f5f0cb",
+      "name": "request",
+      "position": {
+        "x": -385,
+        "y": 120
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "/**\n * @type {import(\"zen\").Handler}\n */\nexport const handler = async (input) => {\n  if (!input.studentID) {\n    return {\n      flags: { inputValid: false },\n      error: \"Missing field: ID\"\n    };\n  }\n  if (!input.fullName) {\n    return {\n      flags: { inputValid: false },\n      error: \"Missing field: fullName\"\n    };\n  }\n  if (input.GPA == null) {\n    return {\n      flags: { inputValid: false },\n      error: \"Missing field: GPA\"\n    };\n  }\n  if (input.AnnualIncome == null) {\n    return {\n      flags: { inputValid: false },\n      error: \"Missing field: Annual Income\"\n    };\n  }\n  if (!input.SocioStatus) {\n    return {\n      flags: { inputValid: false },\n      error: \"Missing field: SocioStatus\"\n    };\n  }\n  if (input.ExtracurricularScore == null) {\n    return {\n      flags: { inputValid: false },\n      error: \"Missing field: Extracurricular Score\"\n    };\n  }\n  return {\n    ...input,\n    flags: { inputValid: true }\n  };\n};"
+      },
+      "id": "981d1f74-e9d2-4e6c-9a5d-4ea6c47be677",
+      "name": "Input Validator",
+      "position": {
+        "x": -145,
+        "y": 120
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "30d89abb-f3e9-48ff-adc7-454588581bc0",
+            "condition": "flags.inputValid == true",
+            "isDefault": false
+          },
+          {
+            "id": "4ac14d1b-a7a6-478d-b80f-4b06df5a992c",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "64aaec3a-4bba-40cb-af6d-04cf1cb92e20",
+      "name": "Check Input",
+      "position": {
+        "x": 100,
+        "y": 120
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "e86e2a8e-5598-4130-8380-187e77dd64bf",
+      "name": "Failed Data Missing",
+      "position": {
+        "x": 350,
+        "y": 235
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "/**\r\n * @type {import(\"zen\").Handler}\r\n */\r\nexport const handler = async (input) => {\r\n  const flags = input.flags || {};\r\n\r\n  if (input.GPA < 3.0) {\r\n    return {\r\n      ...input,\r\n      flags: {\r\n        ...flags,\r\n        gpaEligible: false\r\n      },\r\n      error: \"Rejected due to GPA below 3.0. Candidate is not eligible for scholarship consideration.\"\r\n    };\r\n  }\r\n  const academicScore = input.GPA * 10;\r\n\r\n  return {\r\n    ...input,\r\n    flags: {\r\n      ...flags,\r\n      gpaEligible: true,\r\n      academicScore\r\n    }\r\n  };\r\n};"
+      },
+      "id": "28e83fe5-4113-4bc7-9adf-7a286018dfae",
+      "name": "GPA Handler",
+      "position": {
+        "x": 350,
+        "y": 145
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "fbbb6d43-79e9-478e-97d4-7423e4336f9c",
+            "condition": "flags.gpaEligible == true",
+            "isDefault": false
+          },
+          {
+            "id": "8cc24411-b931-4461-9733-260594aed336",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "20257bf3-ae47-4b91-b0df-78082c410997",
+      "name": "Check GPA Eligibility",
+      "position": {
+        "x": 605,
+        "y": 145
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "ece778ca-8d07-48c3-9bae-5420f214fd29",
+      "name": "Failed GPA Under 3",
+      "position": {
+        "x": 890,
+        "y": 290
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "30fe199c-328d-467c-9cb6-2a39a1d52006",
+            "541e479f-a458-4106-ab63-e87e34ac8c8e": "[0..19999]",
+            "67b4a04e-7f78-4c2a-94e3-c38532e11c15": "25"
+          },
+          {
+            "_id": "c06589de-16f7-4383-befd-d413d1427d4b",
+            "541e479f-a458-4106-ab63-e87e34ac8c8e": "[20000..39999]",
+            "67b4a04e-7f78-4c2a-94e3-c38532e11c15": "20"
+          },
+          {
+            "_id": "6162f919-926f-4f7a-a0d7-5f4eea694e95",
+            "541e479f-a458-4106-ab63-e87e34ac8c8e": "[40000..59999]",
+            "67b4a04e-7f78-4c2a-94e3-c38532e11c15": "15",
+            "_description": ""
+          },
+          {
+            "_id": "c1a161e9-e763-4bb8-aa32-60acbb6ab2e0",
+            "541e479f-a458-4106-ab63-e87e34ac8c8e": "[60000..79999]",
+            "67b4a04e-7f78-4c2a-94e3-c38532e11c15": "10"
+          },
+          {
+            "_id": "3834bf5d-beac-487b-a4a5-a2d78aca4375",
+            "541e479f-a458-4106-ab63-e87e34ac8c8e": "[80000..9999999]",
+            "67b4a04e-7f78-4c2a-94e3-c38532e11c15": "5"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "541e479f-a458-4106-ab63-e87e34ac8c8e",
+            "name": "Annual Income",
+            "field": "AnnualIncome"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "67b4a04e-7f78-4c2a-94e3-c38532e11c15",
+            "name": "Income Score",
+            "field": "flags.incomeScore"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single",
+        "passThorough": false
+      },
+      "id": "d204a2ba-fcf4-4b6b-ae1c-4389b34bbb35",
+      "name": "Annual Income",
+      "position": {
+        "x": 890,
+        "y": 10
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "15bafc0e-1d96-4851-abf4-b92c8fe4832f",
+            "82c5751e-907b-4070-9eab-3c650396ecad": "\"Tier 1\"",
+            "51e0fc00-de96-4936-91af-251c1a1acf34": "15"
+          },
+          {
+            "_id": "941845a7-a4e3-4c1b-83aa-5ce96f88aab9",
+            "82c5751e-907b-4070-9eab-3c650396ecad": "\"Tier 2\"",
+            "51e0fc00-de96-4936-91af-251c1a1acf34": "10"
+          },
+          {
+            "_id": "e2326455-d122-41a5-8251-f599e7786da8",
+            "82c5751e-907b-4070-9eab-3c650396ecad": "\"Tier 3\"",
+            "51e0fc00-de96-4936-91af-251c1a1acf34": "5"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "82c5751e-907b-4070-9eab-3c650396ecad",
+            "name": "Socio Status",
+            "field": "SocioStatus"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "51e0fc00-de96-4936-91af-251c1a1acf34",
+            "name": "Status Score",
+            "field": "flags.statusScore"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single",
+        "passThorough": false
+      },
+      "id": "b0a68c1d-3fce-4e20-8453-c9d61e18dd3c",
+      "name": "Socio Status",
+      "position": {
+        "x": 890,
+        "y": 110
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "d22bff1d-d58f-4971-b8ec-1c4aea566ba6",
+            "f252147e-bb74-4ba0-847a-1952d1618f3e": "[0..2.99]",
+            "00a580e2-c67a-4166-9db0-d57699a20294": "5"
+          },
+          {
+            "_id": "3742da99-85b7-44b4-bdb2-a675224e20a2",
+            "f252147e-bb74-4ba0-847a-1952d1618f3e": "[3.0..4.99]",
+            "00a580e2-c67a-4166-9db0-d57699a20294": "10"
+          },
+          {
+            "_id": "8b81dc67-eb48-45d7-aa7e-11a865fb1f4f",
+            "f252147e-bb74-4ba0-847a-1952d1618f3e": "[5.0..6.99]",
+            "00a580e2-c67a-4166-9db0-d57699a20294": "15"
+          },
+          {
+            "_id": "c9f6ec09-9391-4154-8aef-bb5278f24452",
+            "f252147e-bb74-4ba0-847a-1952d1618f3e": "[7.0..8.99]",
+            "00a580e2-c67a-4166-9db0-d57699a20294": "18"
+          },
+          {
+            "_id": "5f87d757-ce8e-4b81-bc97-60a17530a51e",
+            "f252147e-bb74-4ba0-847a-1952d1618f3e": "[9.0..10]",
+            "00a580e2-c67a-4166-9db0-d57699a20294": "20"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "f252147e-bb74-4ba0-847a-1952d1618f3e",
+            "name": "Input",
+            "field": "ExtracurricularScore"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "00a580e2-c67a-4166-9db0-d57699a20294",
+            "name": "EC Score",
+            "field": "flags.ecScore"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single",
+        "passThorough": false
+      },
+      "id": "ddaff817-14ea-47af-8eb2-606ca0bc5e3b",
+      "name": "Extracurricular Score",
+      "position": {
+        "x": 890,
+        "y": 205
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "/**\r\n * @type {import(\"zen\").Handler}\r\n */\r\nexport const handler = async (input) => {\r\n  const flags = input.flags || {};\r\n\r\n  const totalScore =\r\n    (flags.academicScore || 0) +\r\n    (flags.incomeScore || 0) +\r\n    (flags.statusScore || 0) +\r\n    (flags.ecScore || 0);\r\n\r\n  let scholarshipCategory = \"Not Eligible\";\r\n\r\n  if (totalScore >= 85) {\r\n    scholarshipCategory = \"Full Scholarship\";\r\n  } else if (totalScore >= 70) {\r\n    scholarshipCategory = \"Partial Scholarship\";\r\n  } else if (totalScore >= 60) {\r\n    scholarshipCategory = \"Manual Review\";\r\n  }\r\n\r\n  return {\r\n    studentID: input.studentID,\r\n    fullName: input.fullName,\r\n    totalScore,\r\n    scholarshipCategory\r\n  };\r\n};"
+      },
+      "id": "7986550a-d59f-498d-abf5-e90b498ea110",
+      "name": "Aggregator",
+      "position": {
+        "x": 1175,
+        "y": 115
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "a9ac7d7a-ec84-47bb-8042-c620f17e1985",
+      "name": "Result",
+      "position": {
+        "x": 1425,
+        "y": 115
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "d6cc86c5-ad51-4eb6-8ced-95130cc50e0a",
+      "sourceId": "1091d487-eaf7-4bb6-adc5-834a16f5f0cb",
+      "type": "edge",
+      "targetId": "981d1f74-e9d2-4e6c-9a5d-4ea6c47be677"
+    },
+    {
+      "id": "9c4550c4-3a0e-4398-8cd8-399e1061eff8",
+      "sourceId": "981d1f74-e9d2-4e6c-9a5d-4ea6c47be677",
+      "type": "edge",
+      "targetId": "64aaec3a-4bba-40cb-af6d-04cf1cb92e20"
+    },
+    {
+      "id": "d1acb062-51b6-409e-8fc5-d46c6ac7f1c9",
+      "sourceId": "64aaec3a-4bba-40cb-af6d-04cf1cb92e20",
+      "type": "edge",
+      "targetId": "e86e2a8e-5598-4130-8380-187e77dd64bf",
+      "sourceHandle": "4ac14d1b-a7a6-478d-b80f-4b06df5a992c"
+    },
+    {
+      "id": "fb4993b6-aa2a-4676-9d46-4c46aea07e31",
+      "sourceId": "64aaec3a-4bba-40cb-af6d-04cf1cb92e20",
+      "type": "edge",
+      "targetId": "28e83fe5-4113-4bc7-9adf-7a286018dfae",
+      "sourceHandle": "30d89abb-f3e9-48ff-adc7-454588581bc0"
+    },
+    {
+      "id": "7382f0f5-9d8d-4e23-a7f5-4f5fb24dd611",
+      "sourceId": "28e83fe5-4113-4bc7-9adf-7a286018dfae",
+      "type": "edge",
+      "targetId": "20257bf3-ae47-4b91-b0df-78082c410997"
+    },
+    {
+      "id": "4a4b047e-7505-46e6-8eae-9abb646bfc7a",
+      "sourceId": "20257bf3-ae47-4b91-b0df-78082c410997",
+      "type": "edge",
+      "targetId": "ece778ca-8d07-48c3-9bae-5420f214fd29",
+      "sourceHandle": "8cc24411-b931-4461-9733-260594aed336"
+    },
+    {
+      "id": "3c7ed21a-aad3-4b9d-83b2-4bc415f23590",
+      "sourceId": "d204a2ba-fcf4-4b6b-ae1c-4389b34bbb35",
+      "type": "edge",
+      "targetId": "7986550a-d59f-498d-abf5-e90b498ea110"
+    },
+    {
+      "id": "23a71e66-b73f-4d84-85f0-9c675ff9907e",
+      "sourceId": "b0a68c1d-3fce-4e20-8453-c9d61e18dd3c",
+      "type": "edge",
+      "targetId": "7986550a-d59f-498d-abf5-e90b498ea110"
+    },
+    {
+      "id": "f5a7fcce-d908-4cc5-ad2e-b7d312bc1c1e",
+      "sourceId": "ddaff817-14ea-47af-8eb2-606ca0bc5e3b",
+      "type": "edge",
+      "targetId": "7986550a-d59f-498d-abf5-e90b498ea110"
+    },
+    {
+      "id": "11fff0a9-725c-46dc-a7c6-c40c0b00cf5d",
+      "sourceId": "7986550a-d59f-498d-abf5-e90b498ea110",
+      "type": "edge",
+      "targetId": "a9ac7d7a-ec84-47bb-8042-c620f17e1985"
+    },
+    {
+      "id": "bdfd9614-ad99-46dc-b314-1bc76852bfbe",
+      "sourceId": "20257bf3-ae47-4b91-b0df-78082c410997",
+      "type": "edge",
+      "targetId": "ddaff817-14ea-47af-8eb2-606ca0bc5e3b",
+      "sourceHandle": "fbbb6d43-79e9-478e-97d4-7423e4336f9c"
+    },
+    {
+      "id": "cc4365d6-3fb0-4dce-a056-0a2c0b435587",
+      "sourceId": "20257bf3-ae47-4b91-b0df-78082c410997",
+      "type": "edge",
+      "targetId": "b0a68c1d-3fce-4e20-8453-c9d61e18dd3c",
+      "sourceHandle": "fbbb6d43-79e9-478e-97d4-7423e4336f9c"
+    },
+    {
+      "id": "4269adbe-cf54-41e6-9d09-bcf33efce8d3",
+      "sourceId": "20257bf3-ae47-4b91-b0df-78082c410997",
+      "type": "edge",
+      "targetId": "d204a2ba-fcf4-4b6b-ae1c-4389b34bbb35",
+      "sourceHandle": "fbbb6d43-79e9-478e-97d4-7423e4336f9c"
+    }
+  ]
+}
